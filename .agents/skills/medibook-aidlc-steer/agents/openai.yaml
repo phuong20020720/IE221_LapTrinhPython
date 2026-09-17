@@ -1,0 +1,4 @@
+interface:
+  display_name: "MediBook AI-DLC Steer"
+  short_description: "Route MediBook increments through AI-DLC gates"
+  default_prompt: "Use $medibook-aidlc-steer to assess the repository state and route the next MediBook increment through the correct AI-DLC gates."

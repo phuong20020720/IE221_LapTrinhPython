@@ -1,0 +1,4 @@
+interface:
+  display_name: "MediBook AI-DLC Implement"
+  short_description: "Deliver traced MediBook vertical slices"
+  default_prompt: "Use $medibook-aidlc-implement to deliver a MediBook feature as a tested vertical slice traced to requirements and ADRs."

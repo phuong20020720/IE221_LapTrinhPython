@@ -1,0 +1,17 @@
+<svg width="720" height="560" viewBox="0 0 720 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="560" rx="48" fill="#DFF2ED"/>
+  <circle cx="565" cy="126" r="74" fill="#B6E2D7"/>
+  <path d="M122 438H598" stroke="#77B8A9" stroke-width="12" stroke-linecap="round"/>
+  <path d="M192 438V220L360 126L528 220V438" fill="white" stroke="#176F63" stroke-width="14" stroke-linejoin="round"/>
+  <path d="M322 210H398V286H322V210Z" fill="#35A992"/>
+  <path d="M344 188H376V308H344V188Z" fill="#35A992"/>
+  <path d="M270 438V332H352V438" fill="#C8E9E1" stroke="#176F63" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M410 438V332H474V438" fill="#C8E9E1" stroke="#176F63" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="324" cy="384" r="7" fill="#176F63"/>
+  <path d="M160 438V350" stroke="#176F63" stroke-width="12" stroke-linecap="round"/>
+  <path d="M130 374C130 344 143 322 160 322C177 322 190 344 190 374" fill="#8FD1C2"/>
+  <path d="M560 438V350" stroke="#176F63" stroke-width="12" stroke-linecap="round"/>
+  <path d="M530 374C530 344 543 322 560 322C577 322 590 344 590 374" fill="#8FD1C2"/>
+  <text x="360" y="500" text-anchor="middle" fill="#176F63" font-family="Arial, sans-serif" font-size="28" font-weight="700">MEDIBOOK</text>
+</svg>
+
