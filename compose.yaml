@@ -30,6 +30,8 @@ services:
       DJANGO_DEBUG: ${DJANGO_DEBUG:-true}
       DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
       DJANGO_CORS_ALLOWED_ORIGINS: ${DJANGO_CORS_ALLOWED_ORIGINS:-http://localhost:5173}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       DATABASE_NAME: ${POSTGRES_DB:-medibook}
       DATABASE_USER: ${POSTGRES_USER:-medibook}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-medibook_dev}
