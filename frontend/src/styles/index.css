@@ -1,0 +1,166 @@
+:root {
+  color: #183230;
+  background: #f4f8f6;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  min-height: 100vh;
+  padding: 24px clamp(24px, 6vw, 96px) 64px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  color: #0b695d;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+nav a,
+.text-link {
+  color: #315b56;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 88px);
+  max-width: 1200px;
+  margin: clamp(72px, 12vh, 140px) auto 0;
+}
+
+.eyebrow {
+  margin: 0 0 16px;
+  color: #138273;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+
+h1 {
+  max-width: 760px;
+  margin: 0;
+  color: #143d38;
+  font-size: clamp(2.4rem, 5.5vw, 5.4rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.lead {
+  max-width: 680px;
+  margin: 28px 0;
+  color: #54716d;
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+.hero-image {
+  display: block;
+  width: 100%;
+  max-height: 520px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 12px 16px;
+  border: 1px solid #c5ded8;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #315b56;
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.status span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d89f2b;
+}
+
+.status--connected span {
+  background: #1b9b79;
+}
+
+.status--unavailable span {
+  background: #c84c4c;
+}
+
+.centered-page {
+  display: grid;
+  place-content: center;
+  min-height: 100vh;
+  padding: 32px;
+  text-align: center;
+}
+
+.centered-page h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+}
+
+.centered-page p:not(.eyebrow) {
+  max-width: 600px;
+  color: #54716d;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .topbar,
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero {
+    margin-top: 64px;
+  }
+
+  .hero-image {
+    order: -1;
+    max-height: 320px;
+  }
+}
+

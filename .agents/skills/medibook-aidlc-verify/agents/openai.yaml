@@ -1,0 +1,4 @@
+interface:
+  display_name: "MediBook AI-DLC Verify"
+  short_description: "Verify increments before approval gates"
+  default_prompt: "Use $medibook-aidlc-verify to audit a MediBook increment and produce evidence for its AI-DLC approval gate."

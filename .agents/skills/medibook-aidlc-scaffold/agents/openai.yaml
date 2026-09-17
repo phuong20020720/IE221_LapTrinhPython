@@ -1,0 +1,4 @@
+interface:
+  display_name: "MediBook AI-DLC Scaffold"
+  short_description: "Build the approved MediBook source base"
+  default_prompt: "Use $medibook-aidlc-scaffold to create and verify the MediBook walking skeleton from accepted architecture decisions."
