@@ -1,35 +1,35 @@
 # AI-DLC State
 
 - Profile: MVP
-- Increment: Chatbot policy và prompt-injection defense
-- Current stage: Acceptance
+- Increment: Accounts, Authentication và Patients
+- Current stage: Verification
 - Gate status: pending
-- Last verified: 2026-09-17
+- Last verified: 2026-09-18
 
 ## Scope
 
-Phân loại câu hỏi chatbot thành cho phép, chuyển hướng, cấp cứu hoặc chặn; ngăn prompt injection, truy xuất dữ liệu/bí mật trái phép và dữ liệu cá nhân gửi nhầm trước khi gọi Gemini. Không triển khai Doctors hoặc Appointments API.
+Triển khai custom User + JWT cho Employee/Admin, CRUD Employee (Admin), Patient model với chuẩn hóa SĐT, CRUD/search Patients, và SPA auth flow kèm UI quản lý.
 
 ## Sources of truth
 
-- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#2.3-chatbot-ai`
-- `inception/architecture/adr/003-chatbot-boundary.md`
-- `inception/architecture/security-and-permission-model.md#chatbot-safety`
+- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#12-đăng-nhập-và-phân-quyền`
+- `inception/plainning/thiết-kế-database-và-erd.md#4.1-users`
+- `inception/plainning/thiết-kế-database-và-erd.md#4.5-patients`
+- `inception/architecture/adr/002-authentication.md`
+- `inception/architecture/api-contract.md`
+- `inception/architecture/security-and-permission-model.md`
 
 ## Evidence
 
-- Django check và migration check: passed.
-- Backend suite: 10 tests passed.
-- Frontend typecheck, ESLint, Vitest và production build: passed.
-- Live prompt injection: `PROMPT_INJECTION/BLOCK`, Gemini không được gọi.
-- Live secret exfiltration: `PRIVATE_DATA_REQUEST/BLOCK`, Gemini không được gọi.
-- Verification Gate: passed; không có finding nghiêm trọng.
-- Không có import Patient/Appointment trong chatbot; `.env` được ignore và không phát hiện Gemini secret trong source.
+- Django check + makemigrations check: passed.
+- Backend tests: 24 passed (`accounts`, `patients`, `chatbot`).
+- Frontend typecheck, ESLint, Vitest (8) và production build: passed.
+- Migrations: `accounts.0002_user_role_constraint`, `patients.0001_initial`.
 
 ## Open decisions
 
-- Rate limit và abuse monitoring chưa nằm trong slice này.
+- Không
 
 ## Next action
 
-Người dùng kiểm tra các nhóm policy trên UI và quyết định Acceptance Gate.
+Chạy `$medibook-aidlc-verify` hoặc người dùng Acceptance Gate sau khi tự smoke-test login/Patients/Employees trên UI.

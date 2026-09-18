@@ -67,17 +67,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DATABASE_NAME", "medibook"),
-        "USER": os.getenv("DATABASE_USER", "medibook"),
-        "PASSWORD": os.getenv("DATABASE_PASSWORD", "medibook_dev"),
-        "HOST": os.getenv("DATABASE_HOST", "127.0.0.1"),
-        "PORT": os.getenv("DATABASE_PORT", "5433"),
-        "CONN_MAX_AGE": 60,
+if env_bool("MEDIBOOK_USE_SQLITE", False):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DATABASE_NAME", "medibook"),
+            "USER": os.getenv("DATABASE_USER", "medibook"),
+            "PASSWORD": os.getenv("DATABASE_PASSWORD", "medibook_dev"),
+            "HOST": os.getenv("DATABASE_HOST", "127.0.0.1"),
+            "PORT": os.getenv("DATABASE_PORT", "5433"),
+            "CONN_MAX_AGE": 60,
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

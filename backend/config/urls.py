@@ -1,15 +1,18 @@
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from apps.accounts.urls import auth_urlpatterns, employee_urlpatterns
 from config.views import health_check
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/health/", health_check, name="health-check"),
-    path("api/v1/auth/token/", TokenObtainPairView.as_view(), name="token-obtain-pair"),
-    path("api/v1/auth/token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
+    path("api/v1/auth/", include((auth_urlpatterns, "accounts"), namespace="auth")),
+    path(
+        "api/v1/employees/",
+        include((employee_urlpatterns, "accounts"), namespace="employees"),
+    ),
+    path("api/v1/patients/", include("apps.patients.urls")),
     path("api/v1/chatbot/", include("apps.chatbot.urls")),
 ]
-

@@ -17,9 +17,13 @@ API prefix dự kiến: `/api/v1/`. Response dùng JSON và lỗi có cấu trú
 
 | Method | Endpoint | Role |
 |---|---|---|
-| `POST` | `/auth/token` | Employee/Admin |
+| `POST` | `/auth/token` | Employee/Admin — trả `access`, `refresh` và `user` |
 | `POST` | `/auth/token/refresh` | Employee/Admin |
-| `GET/PATCH` | `/patients/{id}` | Employee/Admin |
+| `GET` | `/auth/me` | Employee/Admin — thông tin phiên hiện tại |
+| `GET/POST` | `/employees` | Admin — danh sách/tạo tài khoản Employee |
+| `GET/PATCH/DELETE` | `/employees/{id}` | Admin — `DELETE` vô hiệu hóa (`is_active=false`) |
+| `GET/POST` | `/patients` | Employee/Admin — `GET` hỗ trợ `?q=` tìm theo tên hoặc SĐT |
+| `GET/PATCH/DELETE` | `/patients/{id}` | Employee/Admin — `DELETE` vô hiệu hóa hồ sơ |
 | `GET/PATCH/DELETE` | `/appointments/{id}` | Employee/Admin; `DELETE` được xử lý như hủy lịch theo quy tắc nghiệp vụ |
 | `GET/POST/PATCH/DELETE` | `/doctors`, `/specialties` | Admin |
 | `GET` | `/dashboard/summary` | Employee/Admin |
@@ -32,6 +36,8 @@ API prefix dự kiến: `/api/v1/`. Response dùng JSON và lỗi có cấu trú
 - Tạo lịch thành công trả HTTP `201` và `booking_code`.
 - Validation lỗi trả `400`; chưa xác thực trả `401`; không đủ quyền trả `403`; không tìm thấy trả `404`.
 - SPA gửi JWT trong header `Authorization: Bearer <access_token>` cho internal endpoints.
+- Số điện thoại bệnh nhân được chuẩn hóa về dạng `0xxxxxxxxx` trước khi lưu hoặc tìm kiếm.
+- Không ghi đè email/họ tên bệnh nhân hiện có bằng chuỗi rỗng khi cập nhật.
 
 Ví dụ tạo lịch:
 
