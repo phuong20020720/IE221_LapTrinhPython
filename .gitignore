@@ -16,6 +16,8 @@ venv/
 *.log
 staticfiles/
 media/
+db.sqlite3
+backend/db.sqlite3
 
 # Node
 node_modules/
