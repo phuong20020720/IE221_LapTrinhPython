@@ -47,6 +47,35 @@ function IconLogout() {
   );
 }
 
+function IconSpecialties() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="admin-nav__icon"
+    >
+      <path
+        d="M12 2a3 3 0 0 1 3 3v4h4a3 3 0 0 1 0 6h-4v4a3 3 0 0 1-6 0v-4H5a3 3 0 0 1 0-6h4V5a3 3 0 0 1 3-3z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+function IconDoctors() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="admin-nav__icon"
+    >
+      <path
+        d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm7 8v-2c0-2.8-3.1-5-7-5s-7 2.2-7 5v2h14zm1-13h-2V5h-2V3h2V1h2v2h2v2h-2v2z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
 
 export function AdminLayout() {
   const { user, logout } = useAuth();
@@ -82,10 +111,22 @@ export function AdminLayout() {
               <span>Bệnh nhân</span>
             </NavLink>
             {user?.role === "ADMIN" ? (
+              <>
               <NavLink to="/admin/employees" className="admin-nav__item">
                 <IconEmployees />
                 <span>Nhân viên</span>
               </NavLink>
+
+              <NavLink to="/admin/specialties" className="admin-nav__item">
+                <IconSpecialties />
+                <span>Chuyên khoa</span>
+              </NavLink>
+
+               <NavLink to="/admin/doctors"className="admin-nav__item">
+                <IconDoctors />
+                <span>Bác sĩ</span>
+              </NavLink>
+              </>
             ) : null}
           </nav>
         </div>

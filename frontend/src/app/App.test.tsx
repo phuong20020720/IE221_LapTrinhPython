@@ -45,8 +45,10 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: "Danh sách bác sĩ" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mở trợ lý MediBook" })).toBeInTheDocument();
+    // expect(screen.getByRole("heading", { name: "Danh sách bác sĩ" })).toBeInTheDocument();
+    // expect(screen.getByRole("button", { name: "Mở trợ lý MediBook" })).toBeInTheDocument();
+    expect( screen.getByRole("heading", { name: "Tìm bác sĩ phù hợp",}),).toBeInTheDocument();
+    expect( screen.getByRole("button", { name: "Mở trợ lý MediBook",}),).toBeInTheDocument();
   });
 
   it("does not show the chatbot on the internal login route", () => {

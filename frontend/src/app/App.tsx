@@ -12,6 +12,10 @@ import { LoginPage } from "../pages/LoginPage";
 import { PatientsPage } from "../pages/PatientsPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 
+import { DoctorDetailPage } from "../pages/DoctorDetailPage";
+import { DoctorsPage } from "../pages/DoctorsPage";
+import { SpecialtiesPage } from "../pages/SpecialtiesPage";
+import { AdminDoctorsPage } from "../pages/AdminDoctorsPage";
 
 export function App() {
   return (
@@ -20,10 +24,12 @@ export function App() {
         <Routes>
           <Route element={<CustomerLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route
+            {/* <Route
               path="/doctors"
               element={<PlaceholderPage title="Danh sách bác sĩ" />}
-            />
+            /> */}
+            <Route path="/doctors" element={<DoctorsPage />} />
+            <Route path="/doctors/:doctorId" element={<DoctorDetailPage />} />
             <Route
               path="/booking"
               element={<PlaceholderPage title="Đặt lịch khám" />}
@@ -40,10 +46,13 @@ export function App() {
               <Route path="patients" element={<PatientsPage />} />
               <Route element={<RoleRoute roles={["ADMIN"]} />}>
                 <Route path="employees" element={<EmployeesPage />} />
+                <Route path="specialties" element={<SpecialtiesPage />}/>
+                <Route path="doctors" element={<AdminDoctorsPage />}/>
               </Route>
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
+          {/* <Route path="/doctors" element={<PlaceholderPage title="Danh sách bác sĩ" />}/> */}
         </Routes>
       </BrowserRouter>
     </AuthProvider>
