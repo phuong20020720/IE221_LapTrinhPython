@@ -1,172 +1,81 @@
+import { ArrowLeft, CalendarDays, CheckCircle2, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import {
-  getDoctor,
-  type Doctor,
-} from "../shared/api/doctors";
-import { getDoctorImage } from "../shared/lib/doctorImage";
+import { getDoctor, type Doctor } from "../shared/api/doctors";
+import { getDoctorDisplayName } from "../shared/lib/doctorDisplayName";
+import { getDoctorImage, handleDoctorImageError } from "../shared/lib/doctorImage";
+
+type LoadState = "loading" | "success" | "error" | "invalid";
 
 export function DoctorDetailPage() {
   const { doctorId } = useParams();
-
-  const [doctor, setDoctor] =
-    useState<Doctor | null>(null);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
+  const id = Number(doctorId);
+  const validId = Number.isInteger(id) && id > 0;
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [state, setState] = useState<LoadState>(validId ? "loading" : "invalid");
+  const [error, setError] = useState("");
+  const [reload, setReload] = useState(0);
 
   useEffect(() => {
-    const id = Number(doctorId);
-
-    if (!Number.isInteger(id) || id < 1) {
-      setError("Mã bác sĩ không hợp lệ.");
-      setLoading(false);
+    if (!validId) {
+      setState("invalid");
       return;
     }
-
     const controller = new AbortController();
-
+    setState("loading");
+    setError("");
     getDoctor(id, controller.signal)
-      .then(setDoctor)
-      .catch((err: unknown) => {
-        if (
-          err instanceof DOMException &&
-          err.name === "AbortError"
-        ) {
-          return;
-        }
-
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Không tải được thông tin bác sĩ.",
-        );
+      .then((data) => {
+        setDoctor(data);
+        setState("success");
       })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setLoading(false);
-        }
+      .catch((err: unknown) => {
+        if (controller.signal.aborted) return;
+        setError(err instanceof Error ? err.message : "Không tải được thông tin bác sĩ.");
+        setState("error");
       });
-
     return () => controller.abort();
-  }, [doctorId]);
+  }, [id, reload, validId]);
 
-  if (loading) {
-    return (
-      <main className="page-shell">
-        <p className="doctor-empty">
-          Đang tải thông tin bác sĩ...
-        </p>
-      </main>
-    );
+  if (state === "loading") {
+    return <div className="customer-container customer-page"><div className="doctor-detail-skeleton" aria-label="Đang tải thông tin bác sĩ"><span /><div /></div></div>;
   }
 
-  if (error || !doctor) {
+  if (state === "invalid" || state === "error" || !doctor) {
     return (
-      <main className="page-shell">
-        <div className="doctor-empty">
-          <p>
-            {error ||
-              "Không tìm thấy bác sĩ."}
-          </p>
-
-          <Link to="/doctors">
-            Quay lại danh sách bác sĩ
-          </Link>
+      <div className="customer-container customer-page">
+        <div className="doctor-empty" role={state === "error" ? "alert" : undefined}>
+          <h1>{state === "invalid" ? "Mã bác sĩ không hợp lệ" : "Chưa thể tải hồ sơ bác sĩ"}</h1>
+          {state === "error" ? <p>{error}</p> : null}
+          <div className="doctor-empty__actions">{state === "error" ? <button className="customer-button customer-button--outline" type="button" onClick={() => setReload((value) => value + 1)}><RotateCcw aria-hidden="true" /> Thử lại</button> : null}<Link className="customer-text-link" to="/doctors"><ArrowLeft aria-hidden="true" /> Quay lại danh sách bác sĩ</Link></div>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="page-shell">
-      <header className="topbar">
-        <Link className="brand" to="/">
-          MediBook
-        </Link>
+    <div className="customer-container customer-page doctor-detail">
+      <nav className="customer-breadcrumb" aria-label="Đường dẫn trang"><Link to="/">Trang chủ</Link><span aria-hidden="true">/</span><Link to="/doctors">Bác sĩ</Link><span aria-hidden="true">/</span><span>{getDoctorDisplayName(doctor)}</span></nav>
+      <Link className="doctor-detail__back" to="/doctors"><ArrowLeft aria-hidden="true" /> Danh sách bác sĩ</Link>
 
-        <nav aria-label="Điều hướng chính">
-          <Link to="/">Trang chủ</Link>
-          <Link to="/doctors">Bác sĩ</Link>
-          <Link to="/booking">Đặt lịch</Link>
-        </nav>
-      </header>
-
-      <section className="doctor-detail">
-        <Link
-          className="doctor-detail__back"
-          to="/doctors"
-        >
-          ← Danh sách bác sĩ
-        </Link>
-
-        <div className="doctor-detail__card">
-          <img
-            className="doctor-detail__image"
-            src={getDoctorImage(doctor.image)}
-            alt={`Bác sĩ ${doctor.full_name}`}
-          />
-
-          <div className="doctor-detail__content">
-            <p className="eyebrow">
-              THÔNG TIN BÁC SĨ
-            </p>
-
-            <h1>{doctor.full_name}</h1>
-
-            <p className="doctor-detail__qualification">
-              {doctor.qualification ||
-                "Chưa cập nhật học vị"}
-            </p>
-
-            <p>
-              <strong>Kinh nghiệm:</strong>{" "}
-              {doctor.experience_years} năm
-            </p>
-
-            <div>
-              <strong>Chuyên khoa:</strong>
-
-              <div className="doctor-specialties">
-                {doctor.expertises.map(
-                  (expertise) => (
-                    <span
-                      className="doctor-specialty-chip"
-                      key={expertise.id}
-                    >
-                      {expertise.specialty.name}
-                      {expertise.is_primary
-                        ? " • Chính"
-                        : ""}
-                    </span>
-                  ),
-                )}
-              </div>
-            </div>
-
-            {doctor.bio ? (
-              <div className="doctor-detail__bio">
-                <h2>Giới thiệu</h2>
-                <p>{doctor.bio}</p>
-              </div>
-            ) : null}
-
-            <Link
-              className="doctor-book-button"
-              to={`/booking?doctor_id=${doctor.id}`}
-            >
-              Đặt lịch với bác sĩ
-            </Link>
-          </div>
+      <section className="doctor-detail__card" aria-labelledby="doctor-name">
+        <img className="doctor-detail__image" src={getDoctorImage(doctor.profile_image_url)} onError={handleDoctorImageError} alt={getDoctorDisplayName(doctor)} />
+        <div className="doctor-detail__content">
+          <p className="customer-eyebrow">{doctor.specialty.name}</p>
+          <h1 id="doctor-name">{getDoctorDisplayName(doctor)}</h1>
+          {doctor.position ? <p className="doctor-detail__position">{doctor.position}</p> : null}
+          <dl className="doctor-detail__facts"><div><dt>Chuyên khoa</dt><dd>{doctor.specialty.name}</dd></div>{doctor.years_of_experience !== null ? <div><dt>Kinh nghiệm</dt><dd>{doctor.years_of_experience} năm</dd></div> : null}</dl>
+          <Link className="doctor-book-button" to={`/booking?doctor_id=${doctor.id}`}><CalendarDays aria-hidden="true" /> Đặt lịch với bác sĩ</Link>
         </div>
       </section>
-    </main>
+
+      {(doctor.professional_description || doctor.expertises.length > 0) ? (
+        <div className="doctor-detail__sections">
+          {doctor.professional_description ? <section><p className="customer-eyebrow">GIỚI THIỆU</p><h2>Kinh nghiệm chuyên môn</h2><p>{doctor.professional_description}</p></section> : null}
+          {doctor.expertises.length > 0 ? <section><p className="customer-eyebrow">LĨNH VỰC CHUYÊN SÂU</p><h2>Thế mạnh chuyên môn</h2><ul>{doctor.expertises.map((expertise) => <li key={expertise.id}><CheckCircle2 aria-hidden="true" /><div><strong>{expertise.expertise_name}</strong>{expertise.description ? <p>{expertise.description}</p> : null}</div></li>)}</ul></section> : null}
+        </div>
+      ) : null}
+    </div>
   );
 }

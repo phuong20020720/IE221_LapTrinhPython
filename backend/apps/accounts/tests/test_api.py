@@ -82,9 +82,26 @@ class EmployeeApiTests(APITestCase):
 
         list_response = self.client.get("/api/v1/employees/")
         self.assertEqual(list_response.status_code, 200)
-        usernames = {item["username"] for item in list_response.data}
+        usernames = {item["username"] for item in list_response.data["results"]}
         self.assertIn("emp1", usernames)
         self.assertIn("emp2", usernames)
+
+    def test_employee_list_uses_default_page_size_ten(self):
+        for index in range(11):
+            User.objects.create_user(
+                username=f"paged-employee-{index}",
+                password="EmployeePass123!",
+                full_name=f"Nhân viên {index}",
+                role=User.Role.EMPLOYEE,
+            )
+        self.client.force_authenticate(user=self.admin)
+
+        first = self.client.get("/api/v1/employees/", {"include_inactive": "true"})
+        second = self.client.get("/api/v1/employees/", {"include_inactive": "true", "page": 2})
+
+        self.assertEqual(first.data["count"], 12)
+        self.assertEqual(len(first.data["results"]), 10)
+        self.assertEqual(len(second.data["results"]), 2)
 
     def test_admin_can_soft_delete_employee(self):
         self.client.force_authenticate(user=self.admin)

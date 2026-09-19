@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 import { App } from "./App";
 
@@ -12,43 +12,44 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders the source-base page and imported image asset", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          status: "healthy",
-          service: "medibook-backend",
-          database: "connected",
-        }),
-      }),
-    );
-
+  it("renders the branded Medicare home and shared customer layout", () => {
     render(<App />);
 
     expect(
       screen.getByRole("heading", {
-        name: "Nền tảng đặt lịch khám đang được khởi tạo.",
+        name: "Chăm sóc sức khỏe tận tâm, đặt lịch thật thuận tiện",
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("img", { name: "Minh họa phòng khám MediBook" }),
+      screen.getByRole("img", { name: "Mặt tiền Phòng khám Medicare hiện đại" }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByText("Backend và PostgreSQL đã kết nối."),
+      screen.getByText("Website demo phục vụ đồ án Python."),
     ).toBeInTheDocument();
   });
 
   it("shows the chatbot on customer routes", () => {
     window.history.replaceState({}, "", "/doctors");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => [] }),
+    );
 
     render(<App />);
 
-    // expect(screen.getByRole("heading", { name: "Danh sách bác sĩ" })).toBeInTheDocument();
-    // expect(screen.getByRole("button", { name: "Mở trợ lý MediBook" })).toBeInTheDocument();
-    expect( screen.getByRole("heading", { name: "Tìm bác sĩ phù hợp",}),).toBeInTheDocument();
-    expect( screen.getByRole("button", { name: "Mở trợ lý MediBook",}),).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Đội ngũ bác sĩ Medicare" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Mở trợ lý Medicare" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Phòng khám Medicare - Trang chủ" })).toBeInTheDocument();
+  });
+
+  it("opens the accessible mobile navigation", () => {
+    render(<App />);
+
+    const menuButton = screen.getByLabelText("Mở menu");
+    fireEvent.click(menuButton);
+
+    expect(menuButton).toHaveAttribute("aria-expanded", "true");
+    expect(document.getElementById("customer-mobile-nav")).not.toHaveAttribute("hidden");
   });
 
   it("does not show the chatbot on the internal login route", () => {
@@ -56,7 +57,16 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(screen.queryByRole("button", { name: "Mở trợ lý MediBook" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Mở trợ lý Medicare" })).not.toBeInTheDocument();
+  });
+
+  it("does not expose public appointment lookup navigation or route", () => {
+    window.history.replaceState({}, "", "/lookup");
+
+    render(<App />);
+
+    expect(window.location.pathname).toBe("/");
+    expect(screen.queryByRole("link", { name: /Tra cứu/ })).not.toBeInTheDocument();
   });
 });
 

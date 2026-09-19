@@ -53,7 +53,7 @@ class PatientServiceTests(TestCase):
         self.assertEqual(patient.phone, "0901234567")
         self.assertEqual(patient.full_name, "Nguyen Van A")
 
-    def test_get_or_create_reuses_existing_by_normalized_phone(self):
+    def test_get_or_create_reuses_existing_and_updates_latest_non_blank_data(self):
         original = create_patient(
             full_name="Nguyen Van A",
             phone="0901234567",
@@ -62,29 +62,29 @@ class PatientServiceTests(TestCase):
         patient, created = get_or_create_patient_by_phone(
             full_name="Ten Khac",
             phone="+84 901-234-567",
-            email="",
+            email="new@example.com",
         )
         self.assertFalse(created)
         self.assertEqual(patient.id, original.id)
-        self.assertEqual(patient.full_name, "Nguyen Van A")
-        self.assertEqual(patient.email, "a@example.com")
+        self.assertEqual(patient.full_name, "Ten Khac")
+        self.assertEqual(patient.email, "new@example.com")
         self.assertEqual(Patient.objects.filter(phone="0901234567").count(), 1)
 
-    def test_get_or_create_fills_blank_email_only(self):
+    def test_get_or_create_does_not_replace_existing_email_with_blank(self):
         original = create_patient(
             full_name="Nguyen Van A",
             phone="0901234567",
-            email="",
+            email="a@example.com",
         )
         patient, created = get_or_create_patient_by_phone(
             full_name="Ten Khac",
             phone="0901234567",
-            email="filled@example.com",
+            email="",
         )
         self.assertFalse(created)
         self.assertEqual(patient.id, original.id)
-        self.assertEqual(patient.full_name, "Nguyen Van A")
-        self.assertEqual(patient.email, "filled@example.com")
+        self.assertEqual(patient.full_name, "Ten Khac")
+        self.assertEqual(patient.email, "a@example.com")
 
 
 class PatientGetOrCreateRaceTests(TransactionTestCase):
@@ -112,7 +112,7 @@ class PatientGetOrCreateRaceTests(TransactionTestCase):
 
         self.assertFalse(created)
         self.assertEqual(patient.id, existing.id)
-        self.assertEqual(patient.full_name, "Nguyen Van A")
+        self.assertEqual(patient.full_name, "Ten Khac")
         self.assertEqual(patient.email, "a@example.com")
 
 
@@ -144,12 +144,29 @@ class PatientApiTests(APITestCase):
         self.client.force_authenticate(user=self.employee)
         by_name = self.client.get("/api/v1/patients/", {"q": "Tran"})
         self.assertEqual(by_name.status_code, 200)
-        self.assertEqual(len(by_name.data), 1)
+        self.assertEqual(len(by_name.data["results"]), 1)
 
         by_phone = self.client.get("/api/v1/patients/", {"q": "+84 912 345 678"})
         self.assertEqual(by_phone.status_code, 200)
-        self.assertEqual(len(by_phone.data), 1)
-        self.assertEqual(by_phone.data[0]["phone"], "0912345678")
+        self.assertEqual(len(by_phone.data["results"]), 1)
+        self.assertEqual(by_phone.data["results"][0]["phone"], "0912345678")
+
+    def test_patient_list_uses_default_page_size_ten(self):
+        for index in range(10):
+            Patient.objects.create(
+                full_name=f"Bệnh nhân {index}",
+                phone=f"09000000{index:02d}",
+            )
+        self.client.force_authenticate(user=self.employee)
+
+        first = self.client.get("/api/v1/patients/", {"include_inactive": "true"})
+        second = self.client.get(
+            "/api/v1/patients/", {"include_inactive": "true", "page": 2}
+        )
+
+        self.assertEqual(first.data["count"], 11)
+        self.assertEqual(len(first.data["results"]), 10)
+        self.assertEqual(len(second.data["results"]), 1)
 
     def test_employee_can_create_and_update_patient(self):
         self.client.force_authenticate(user=self.employee)

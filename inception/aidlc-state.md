@@ -1,35 +1,33 @@
 # AI-DLC State
 
 - Profile: MVP
-- Increment: Accounts, Authentication và Patients
-- Current stage: Verification
+- Increment: Phân trang các API danh sách và UI tương ứng
+- Current stage: Acceptance
 - Gate status: pending
-- Last verified: 2026-09-18
+- Last verified: 2026-09-20
 
 ## Scope
 
-Triển khai custom User + JWT cho Employee/Admin, CRUD Employee (Admin), Patient model với chuẩn hóa SĐT, CRUD/search Patients, và SPA auth flow kèm UI quản lý.
+Chuẩn hóa mọi API danh sách về response phân trang, mặc định 10 bản ghi/trang, và bổ sung điều khiển trang tương ứng trên SPA.
 
 ## Sources of truth
 
-- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#12-đăng-nhập-và-phân-quyền`
-- `inception/plainning/thiết-kế-database-và-erd.md#4.1-users`
-- `inception/plainning/thiết-kế-database-và-erd.md#4.5-patients`
-- `inception/architecture/adr/002-authentication.md`
-- `inception/architecture/api-contract.md`
-- `inception/architecture/security-and-permission-model.md`
+- Yêu cầu trực tiếp của người dùng ngày 2026-09-20.
+- `inception/architecture/api-contract.md#quy-ước-requestresponse`
+- `inception/architecture/adr/004-modular-monolith.md`
 
 ## Evidence
 
-- Django check + makemigrations check: passed.
-- Backend tests: 24 passed (`accounts`, `patients`, `chatbot`).
-- Frontend typecheck, ESLint, Vitest (8) và production build: passed.
-- Migrations: `accounts.0002_user_role_constraint`, `patients.0001_initial`.
+- Backend check và migration check: passed; không có migration mới.
+- Backend full suite: 76 tests passed.
+- Frontend typecheck, lint, 38 tests và production build: passed.
+- Verification Gate: passed; không có finding nghiêm trọng.
+- Xem `inception/implementation/phan-trang-danh-sach.md`.
 
 ## Open decisions
 
-- Không
+- Visual smoke test logo của increment trước vẫn chưa được xác nhận.
 
 ## Next action
 
-Chạy `$medibook-aidlc-verify` hoặc người dùng Acceptance Gate sau khi tự smoke-test login/Patients/Employees trên UI.
+Người dùng smoke-test chuyển trang/lọc trên SPA và quyết định Acceptance Gate.

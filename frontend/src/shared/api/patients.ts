@@ -1,4 +1,5 @@
 import { authFetch } from "./auth";
+import { addPageParams, type PageRequest, type PageResult } from "./pagination";
 
 export type Patient = {
   id: number;
@@ -34,17 +35,23 @@ async function readError(response: Response): Promise<string> {
   return "Yêu cầu không thành công.";
 }
 
-export async function listPatients(query = ""): Promise<Patient[]> {
+export type PatientFilters = PageRequest & {
+  search?: string;
+  status?: "ALL" | "ACTIVE" | "INACTIVE";
+};
+
+export async function listPatients(filters: PatientFilters = {}): Promise<PageResult<Patient>> {
   const params = new URLSearchParams();
   params.set("include_inactive", "true");
-  if (query.trim()) {
-    params.set("q", query.trim());
-  }
+  if (filters.search?.trim()) params.set("q", filters.search.trim());
+  if (filters.status === "ACTIVE") params.set("is_active", "true");
+  if (filters.status === "INACTIVE") params.set("is_active", "false");
+  addPageParams(params, filters);
   const response = await authFetch(`/patients/?${params}`);
   if (!response.ok) {
     throw new Error(await readError(response));
   }
-  return response.json() as Promise<Patient[]>;
+  return response.json() as Promise<PageResult<Patient>>;
 }
 
 export async function createPatient(input: PatientInput): Promise<Patient> {

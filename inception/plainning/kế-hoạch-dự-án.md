@@ -32,7 +32,7 @@ Bệnh nhân truy cập các chức năng công khai để:
 - Lọc bác sĩ theo chuyên khoa.
 - Chọn chuyên khoa, có thể chọn hoặc bỏ qua bác sĩ, ngày và buổi khám.
 - Nhập thông tin cá nhân, lý do khám và gửi lịch hẹn.
-- Nhận mã lịch hẹn và tra cứu lịch hẹn.
+- Nhận mã lịch hẹn và email xác nhận.
 - Hỏi chatbot AI về phòng khám, quy định đặt lịch và kiến thức sức khỏe phổ thông.
 
 Thông tin bệnh nhân được lưu khi đặt lịch. Nếu bệnh nhân đã tồn tại theo số điện thoại, hệ thống gắn lịch hẹn mới với hồ sơ hiện có.
@@ -71,7 +71,7 @@ Bệnh nhân sử dụng các chức năng công khai và không cần đăng nh
 - Nhập thông tin cá nhân và lý do khám.
 - Đặt lịch khám.
 - Nhận mã lịch hẹn sau khi đặt thành công.
-- Tra cứu lịch hẹn bằng mã lịch hẹn hoặc số điện thoại.
+- Dùng mã lịch hẹn làm mã tham chiếu khi liên hệ hoặc đến phòng khám; không tra cứu công khai.
 
 
 
@@ -101,7 +101,7 @@ Admin đăng nhập bằng tài khoản nội bộ và có toàn quyền quản 
 - Quản lý thông tin liên hệ và mô tả chuyên môn của bác sĩ.
 - Quản lý học hàm/học vị, chức vụ, kinh nghiệm, ảnh đại diện và các lĩnh vực chuyên sâu của bác sĩ.
 - Thêm, xem, sửa và xóa chuyên khoa.
-- Quản lý tên, mô tả và thông tin liên hệ của chuyên khoa.
+- Quản lý tên và mô tả chuyên khoa; chuyên khoa là danh mục nên không lưu thông tin liên hệ.
 - Xem danh sách bác sĩ thuộc từng chuyên khoa.
 - Quản lý tài khoản Employee.
 
@@ -115,6 +115,7 @@ Admin đăng nhập bằng tài khoản nội bộ và có toàn quyền quản 
 - Tổng số bác sĩ.
 - Biểu đồ số lịch hẹn theo tuần.
 - Biểu đồ số lịch hẹn theo chuyên khoa.
+- Cho phép chọn tuần tương lai để theo dõi lịch đã lên kế hoạch.
 
 
 
@@ -172,7 +173,7 @@ Nhân viên
 
 ### 7.2. Phạm vi không bao gồm
 
-Thanh toán trực tuyến, hồ sơ bệnh án điện tử, kê đơn, bảo hiểm, tư vấn trực tuyến, gửi SMS/email thực tế, quản lý thiết bị/phòng khám, đa chi nhánh và kiến trúc microservice không thuộc MVP.
+Thanh toán trực tuyến, hồ sơ bệnh án điện tử, kê đơn, bảo hiểm, tư vấn trực tuyến, gửi SMS thực tế hoặc email ngoài xác nhận đặt lịch, quản lý thiết bị/phòng khám, đa chi nhánh và kiến trúc microservice không thuộc MVP.
 
 ## 8. Công nghệ dự kiến
 

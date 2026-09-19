@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,17 @@ from apps.accounts.services import (
     list_employees,
     update_employee,
 )
+from config.pagination import StandardResultsSetPagination
+
+
+def _optional_active(value: str | None) -> bool | None:
+    if value in {None, ""}:
+        return None
+    if value == "true":
+        return True
+    if value == "false":
+        return False
+    raise ValidationError({"is_active": "is_active phải là true hoặc false."})
 
 
 class MediBookTokenObtainPairView(TokenObtainPairView):
@@ -37,8 +49,16 @@ class EmployeeListCreateView(APIView):
 
     def get(self, request):
         include_inactive = request.query_params.get("include_inactive") == "true"
-        employees = list_employees(include_inactive=include_inactive)
-        return Response(EmployeeOutputSerializer(employees, many=True).data)
+        employees = list_employees(
+            query=request.query_params.get("q", ""),
+            include_inactive=include_inactive,
+            is_active=_optional_active(request.query_params.get("is_active")),
+        )
+        paginator = StandardResultsSetPagination()
+        page = paginator.paginate_queryset(employees, request, view=self)
+        return paginator.get_paginated_response(
+            EmployeeOutputSerializer(page, many=True).data
+        )
 
     def post(self, request):
         serializer = EmployeeCreateSerializer(data=request.data)

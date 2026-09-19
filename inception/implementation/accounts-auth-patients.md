@@ -14,6 +14,7 @@
 - [x] SPA: login/logout/refresh, protected routes, UI Patients và Employees
 - [x] Backend/frontend tests cho auth, permission và hành vi chính
 - [x] `get_or_create_patient_by_phone` ổn định cho transaction đặt lịch (atomic, IntegrityError, không ghi đè rỗng)
+- [x] PostgreSQL local có tài khoản Admin `adminmedicare`; mật khẩu chỉ được đặt trực tiếp trong database
 
 ## Implementation map
 
@@ -45,9 +46,10 @@ with transaction.atomic():
 | Command/check | Result |
 |---|---|
 | `MEDIBOOK_USE_SQLITE=1 python manage.py test apps.patients` | passed (12 tests, gồm get_or_create + IntegrityError) |
+| `docker compose run --rm -T backend python manage.py migrate --noinput` | passed; áp dụng migration còn thiếu |
+| Django `authenticate()` cho `adminmedicare` | passed; role `ADMIN`, active/staff/superuser, mật khẩu đã hash |
 
 ## Open items
 
-- Tạo tài khoản Admin seed qua Django admin/`createsuperuser` khi chạy local.
 - Dashboard số liệu và Appointments không thuộc increment này.
 - Production vẫn dùng PostgreSQL qua Docker Compose; `MEDIBOOK_USE_SQLITE` chỉ hỗ trợ kiểm thử khi thiếu Docker.

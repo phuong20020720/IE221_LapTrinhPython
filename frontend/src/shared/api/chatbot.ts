@@ -17,15 +17,21 @@ export type ChatbotResponse = {
   };
 };
 
+export type ChatbotHistoryMessage = {
+  role: "assistant" | "user";
+  text: string;
+};
+
 
 export async function sendChatbotMessage(
   message: string,
+  history: ChatbotHistoryMessage[] = [],
   signal?: AbortSignal,
 ): Promise<ChatbotResponse> {
   const response = await fetch(`${API_BASE_URL}/chatbot/messages/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, history }),
     signal,
   });
   if (!response.ok) {

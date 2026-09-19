@@ -10,7 +10,7 @@ MediBook có giao diện công khai cho Patient và giao diện nội bộ cho E
 
 ## Quyết định
 
-Dùng một frontend SPA. Public routes gồm `/`, `/doctors`, `/booking`, `/lookup`; khu vực nội bộ nằm dưới `/admin/*` và được bảo vệ bằng authentication guard.
+Dùng một frontend SPA. Public routes ban đầu gồm `/`, `/doctors`, `/booking`, `/lookup`; khu vực nội bộ nằm dưới `/admin/*` và được bảo vệ bằng authentication guard. Route `/lookup` được loại bỏ theo ADR-010.
 
 ## Lý do
 

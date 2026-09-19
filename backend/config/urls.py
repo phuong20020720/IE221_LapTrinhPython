@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
@@ -14,5 +16,18 @@ urlpatterns = [
         include((employee_urlpatterns, "accounts"), namespace="employees"),
     ),
     path("api/v1/patients/", include("apps.patients.urls")),
+    path("api/v1/appointments/", include("apps.appointments.urls")),
+    path("api/v1/dashboard/", include("apps.dashboard.urls")),
     path("api/v1/chatbot/", include("apps.chatbot.urls")),
+    path("api/v1/specialties/", include("apps.specialties.public_urls")),
+    path("api/v1/doctors/", include("apps.doctors.public_urls")),
+    path(
+        "api/v1/admin/specialties/",
+        include("apps.specialties.admin_urls"),
+    ),
+    path("api/v1/admin/doctors/", include("apps.doctors.admin_urls")),
 ]
+
+if settings.DEBUG:
+    # Chỉ phục vụ file upload trực tiếp bằng Django trong môi trường local.
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

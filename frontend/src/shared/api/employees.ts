@@ -1,4 +1,5 @@
 import { authFetch } from "./auth";
+import { addPageParams, type PageRequest, type PageResult } from "./pagination";
 
 export type Employee = {
   id: number;
@@ -44,12 +45,22 @@ async function readError(response: Response): Promise<string> {
   return "Yêu cầu không thành công.";
 }
 
-export async function listEmployees(): Promise<Employee[]> {
-  const response = await authFetch("/employees/?include_inactive=true");
+export type EmployeeFilters = PageRequest & {
+  search?: string;
+  status?: "ALL" | "ACTIVE" | "INACTIVE";
+};
+
+export async function listEmployees(filters: EmployeeFilters = {}): Promise<PageResult<Employee>> {
+  const params = new URLSearchParams({ include_inactive: "true" });
+  if (filters.search?.trim()) params.set("q", filters.search.trim());
+  if (filters.status === "ACTIVE") params.set("is_active", "true");
+  if (filters.status === "INACTIVE") params.set("is_active", "false");
+  addPageParams(params, filters);
+  const response = await authFetch(`/employees/?${params}`);
   if (!response.ok) {
     throw new Error(await readError(response));
   }
-  return response.json() as Promise<Employee[]>;
+  return response.json() as Promise<PageResult<Employee>>;
 }
 
 export async function createEmployee(

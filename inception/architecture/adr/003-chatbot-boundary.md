@@ -10,7 +10,7 @@ Chatbot là chức năng công khai cho thông tin phòng khám, quy định đ�
 
 ## Quyết định
 
-Chatbot chỉ truy cập knowledge đã duyệt và các API facade được thiết kế riêng. Chatbot không query trực tiếp bảng `patients`, `appointments` hoặc dữ liệu nội bộ.
+Chatbot chỉ truy cập knowledge Markdown đã duyệt và API facade `POST /api/v1/chatbot/messages/`. Chatbot không query trực tiếp bảng `patients`, `appointments` hoặc dữ liệu nội bộ; không hỗ trợ tra cứu lịch công khai.
 
 ## Lý do
 
@@ -21,4 +21,4 @@ Chatbot chỉ truy cập knowledge đã duyệt và các API facade được thi
 
 ## Hệ quả
 
-MVP có thể lưu knowledge bằng Markdown/JSON được version-control. Nếu sau này cần tra cứu lịch hẹn, phải đi qua API được xác thực/giới hạn và chỉ trả các trường công khai cần thiết. Cần bổ sung rate limit, safety filter và monitoring lỗi model trước production.
+MVP lưu knowledge bằng Markdown được version-control tại `backend/apps/chatbot/knowledge/`. Thông tin lịch chỉ được xem qua API nội bộ có JWT và permission Employee/Admin; không mở facade tra cứu lịch cho chatbot. Cần bổ sung rate limit và monitoring lỗi model trước production; safety filter đã được triển khai ở boundary trước khi gọi provider.

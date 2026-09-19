@@ -4,7 +4,7 @@
 
 Database phục vụ các luồng trong MVP:
 
-- Bệnh nhân đặt và tra cứu lịch khám công khai.
+- Bệnh nhân đặt lịch công khai và nhận thông tin qua email xác nhận.
 - Employee quản lý bệnh nhân và lịch hẹn.
 - Admin quản lý bác sĩ, chuyên khoa và tài khoản nội bộ.
 - Dashboard thống kê từ dữ liệu lịch hẹn.
@@ -52,8 +52,6 @@ erDiagram
         bigint id PK
         varchar name UK
         text description
-        varchar phone
-        varchar email
         boolean is_active
         timestamptz created_at
         timestamptz updated_at
@@ -68,7 +66,7 @@ erDiagram
         integer years_of_experience
         varchar phone
         varchar email
-        varchar profile_image_url
+        varchar profile_image
         text professional_description
         boolean is_active
         timestamptz created_at
@@ -142,8 +140,6 @@ Ghi chú: ở mức triển khai Django nên dùng cột `password` chuẩn củ
 | `id` | `bigint` | PK | Khóa chính |
 | `name` | `varchar(150)` | NOT NULL, UNIQUE | Tên chuyên khoa |
 | `description` | `text` | NULL | Mô tả |
-| `phone` | `varchar(20)` | NULL | Số điện thoại liên hệ |
-| `email` | `varchar(254)` | NULL | Email liên hệ |
 | `is_active` | `boolean` | NOT NULL, DEFAULT `true` | Chuyên khoa còn sử dụng |
 | `created_at` | `timestamptz` | NOT NULL | Thời điểm tạo |
 | `updated_at` | `timestamptz` | NOT NULL | Thời điểm cập nhật |
@@ -162,7 +158,7 @@ Một bác sĩ thuộc đúng một chuyên khoa trong MVP.
 | `years_of_experience` | `integer` | NULL, CHECK >= 0 | Số năm kinh nghiệm |
 | `phone` | `varchar(20)` | NOT NULL | Số điện thoại |
 | `email` | `varchar(254)` | NULL | Email |
-| `profile_image_url` | `varchar(500)` | NULL | URL ảnh đại diện bác sĩ |
+| `profile_image` | `varchar(100)` | NULL | Đường dẫn ảnh upload; file được lưu ở media storage |
 | `professional_description` | `text` | NULL | Mô tả chuyên môn |
 | `is_active` | `boolean` | NOT NULL, DEFAULT `true` | Có được hiển thị/đặt lịch hay không |
 | `created_at` | `timestamptz` | NOT NULL | Thời điểm tạo |
@@ -209,14 +205,14 @@ Lưu lịch hẹn. Bệnh nhân bắt buộc chọn chuyên khoa nhưng có th�
 | Cột | Kiểu PostgreSQL | Ràng buộc | Mô tả |
 |---|---|---|---|
 | `id` | `bigint` | PK | Khóa nội bộ |
-| `booking_code` | `uuid` | NOT NULL, UNIQUE | Mã tra cứu khó đoán, sinh bằng `gen_random_uuid()` hoặc Python `uuid4()` |
+| `booking_code` | `uuid` | NOT NULL, UNIQUE | Mã tham chiếu khó đoán, sinh bằng `gen_random_uuid()` hoặc Python `uuid4()` |
 | `patient_id` | `bigint` | NOT NULL, FK | Tham chiếu `patients.id` |
 | `specialty_id` | `bigint` | NOT NULL, FK | Chuyên khoa bệnh nhân yêu cầu |
 | `doctor_id` | `bigint` | NULL, FK | Bác sĩ được chọn hoặc được Employee phân công sau |
 | `appointment_date` | `date` | NOT NULL | Ngày khám |
 | `session` | `varchar(20)` | NOT NULL | Chỉ nhận `MORNING` hoặc `AFTERNOON` |
 | `reason` | `text` | NOT NULL | Lý do khám |
-| `status` | `varchar(30)` | NOT NULL | `PENDING_ASSIGNMENT`, `CONFIRMED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` |
+| `status` | `varchar(30)` | NOT NULL | `CONFIRMED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED` |
 | `cancellation_reason` | `varchar(30)` | NULL | Ví dụ `PATIENT_REQUEST`, `CLINIC`, `NO_SHOW` |
 | `cancelled_by_id` | `bigint` | NULL, FK | User nội bộ thực hiện hủy |
 | `cancelled_at` | `timestamptz` | NULL | Thời điểm hủy |
@@ -246,16 +242,15 @@ Các ràng buộc dưới đây nên được khai báo bằng Django `CheckCons
 ```sql
 CHECK (role IN ('ADMIN', 'EMPLOYEE'))
 CHECK (session IN ('MORNING', 'AFTERNOON'))
-CHECK (status IN ('PENDING_ASSIGNMENT', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'))
+CHECK (status IN ('CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'))
 CHECK (
     (status = 'CANCELLED' AND cancellation_reason IS NOT NULL)
     OR (status <> 'CANCELLED')
 )
 CHECK (years_of_experience IS NULL OR years_of_experience >= 0)
-CHECK (status IN ('PENDING_ASSIGNMENT', 'CANCELLED') OR doctor_id IS NOT NULL)
 ```
 
-Ngoài database, service đặt lịch phải kiểm tra chuyên khoa đang hoạt động, bác sĩ đang hoạt động nếu được chọn, bác sĩ thuộc đúng chuyên khoa, ngày khám hợp lệ, chuẩn hóa số điện thoại và tạo bệnh nhân/lịch hẹn trong cùng transaction. Lịch không chọn bác sĩ được tạo ở trạng thái `PENDING_ASSIGNMENT`.
+Ngoài database, service đặt lịch phải kiểm tra chuyên khoa đang hoạt động, bác sĩ đang hoạt động nếu được chọn, bác sĩ thuộc đúng chuyên khoa, ngày khám hợp lệ, chuẩn hóa số điện thoại và tạo bệnh nhân/lịch hẹn trong cùng transaction. Mọi lịch hợp lệ được tạo ở trạng thái `CONFIRMED`; `doctor_id` được phép NULL.
 
 Không đặt constraint chống trùng lịch theo bác sĩ/ngày/buổi vì đặc tả MVP cho phép nhiều bệnh nhân đặt cùng một buổi.
 
@@ -273,19 +268,17 @@ CREATE INDEX ix_doctor_expertise_doctor_order ON doctor_expertise (doctor_id, di
 CREATE INDEX ix_appointments_specialty_date ON appointments (specialty_id, appointment_date);
 ```
 
-Các index này phục vụ tra cứu theo mã/số điện thoại, lọc dashboard theo ngày, lọc lịch theo bác sĩ/bệnh nhân và lọc bác sĩ theo chuyên khoa.
+Các index này phục vụ tìm kiếm nội bộ theo mã/số điện thoại, lọc dashboard theo ngày, lọc lịch theo bác sĩ/bệnh nhân và lọc bác sĩ theo chuyên khoa.
 
 ## 8. Quy tắc chuyển trạng thái lịch hẹn
 
 ```text
 CONFIRMED -> IN_PROGRESS -> COMPLETED
 CONFIRMED -> CANCELLED
-PENDING_ASSIGNMENT -> CONFIRMED
-PENDING_ASSIGNMENT -> CANCELLED
 IN_PROGRESS -> CANCELLED   (chỉ khi nghiệp vụ thực tế cho phép)
 ```
 
-Trong MVP, `COMPLETED` và `CANCELLED` là trạng thái kết thúc. Backend phải từ chối chuyển trạng thái ngược hoặc chuyển trực tiếp `CONFIRMED -> COMPLETED`. Employee phải phân công bác sĩ trước khi chuyển `PENDING_ASSIGNMENT` sang `CONFIRMED`.
+Trong MVP, `COMPLETED` và `CANCELLED` là trạng thái kết thúc. Backend phải từ chối chuyển trạng thái ngược hoặc chuyển trực tiếp `CONFIRMED -> COMPLETED`. Lịch `CONFIRMED` không bắt buộc có bác sĩ.
 
 ## 9. Thiết kế dữ liệu cho chatbot AI
 
@@ -302,10 +295,10 @@ Nguồn kiến thức ban đầu nên gồm các tài liệu được kiểm duy
 
 - Thông tin giới thiệu và liên hệ phòng khám.
 - Danh sách chuyên khoa và bác sĩ đang hoạt động.
-- Quy định đặt, đổi, hủy và tra cứu lịch hẹn.
+- Quy định đặt, đổi, hủy lịch hẹn và hướng dẫn liên hệ phòng khám.
 - Nội dung sức khỏe phổ thông có nguồn rõ ràng và ngày rà soát.
 
-Chatbot không được truy vấn trực tiếp toàn bộ bảng `patients` hoặc `appointments`. Nếu cần tra cứu lịch, người dùng phải đi qua API tra cứu hiện có và chỉ nhận các trường công khai đã được quy định.
+Chatbot không được truy vấn trực tiếp bảng `patients` hoặc `appointments` và không hỗ trợ tra cứu lịch. Người dùng được hướng dẫn kiểm tra email xác nhận hoặc liên hệ phòng khám.
 
 ### 9.2. Phương án mở rộng sau MVP
 

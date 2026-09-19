@@ -13,9 +13,16 @@ def get_patient(*, patient_id: int) -> Patient:
         raise NotFound("Không tìm thấy bệnh nhân.") from exc
 
 
-def search_patients(*, query: str = "", include_inactive: bool = False):
+def search_patients(
+    *,
+    query: str = "",
+    include_inactive: bool = False,
+    is_active: bool | None = None,
+):
     queryset = Patient.objects.all().order_by("full_name", "id")
-    if not include_inactive:
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    elif not include_inactive:
         queryset = queryset.filter(is_active=True)
 
     cleaned = query.strip()
@@ -105,22 +112,26 @@ def deactivate_patient(*, patient_id: int) -> Patient:
     return patient
 
 
-def _fill_blank_patient_fields(
+def _sync_booking_patient_fields(
     patient: Patient,
     *,
     full_name: str,
     email: str,
 ) -> Patient:
-    """Chỉ bổ sung field đang trống; không ghi đè giá trị hiện có bằng rỗng/khác."""
+    """Đồng bộ họ tên/email mới nhất từ lần đặt lịch mà không ghi giá trị rỗng."""
     changed = False
     normalized_name = full_name.strip()
-    if normalized_name and not patient.full_name:
+    if normalized_name and normalized_name != patient.full_name:
         patient.full_name = normalized_name
         changed = True
 
     normalized_email = email.strip()
-    if normalized_email and not patient.email:
+    if normalized_email and normalized_email != patient.email:
         patient.email = normalized_email
+        changed = True
+
+    if not patient.is_active:
+        patient.is_active = True
         changed = True
 
     if changed:
@@ -154,7 +165,7 @@ def get_or_create_patient_by_phone(
     existing = Patient.objects.filter(phone=normalized_phone).first()
     if existing is not None:
         return (
-            _fill_blank_patient_fields(
+            _sync_booking_patient_fields(
                 existing,
                 full_name=normalized_name,
                 email=normalized_email,
@@ -175,7 +186,7 @@ def get_or_create_patient_by_phone(
     except IntegrityError:
         raced = Patient.objects.get(phone=normalized_phone)
         return (
-            _fill_blank_patient_fields(
+            _sync_booking_patient_fields(
                 raced,
                 full_name=normalized_name,
                 email=normalized_email,

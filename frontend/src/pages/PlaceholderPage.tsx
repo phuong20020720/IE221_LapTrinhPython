@@ -7,14 +7,14 @@ type PlaceholderPageProps = {
 
 export function PlaceholderPage({ title }: PlaceholderPageProps) {
   return (
-    <main className="centered-page">
-      <p className="eyebrow">ROUTE PLACEHOLDER</p>
+    <section className="centered-page customer-placeholder">
+      <p className="customer-eyebrow">PHÒNG KHÁM MEDICARE</p>
       <h1>{title}</h1>
-      <p>Route đã được khai báo; chức năng sẽ được xây dựng ở increment sau.</p>
-      <Link className="text-link" to="/">
-        Về trang nền tảng
+      <p>Giao diện chức năng này sẽ được hoàn thiện trong slice tiếp theo.</p>
+      <Link className="customer-text-link" to="/">
+        Về trang chủ
       </Link>
-    </main>
+    </section>
   );
 }
 

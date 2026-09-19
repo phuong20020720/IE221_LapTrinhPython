@@ -1,13 +1,17 @@
 import { FormEvent, PointerEvent, useEffect, useRef, useState } from "react";
 
 import chatbotLogo from "../../assets/images/chatbot-logo-cropped.png";
-import { sendChatbotMessage } from "../../shared/api/chatbot";
+import {
+  sendChatbotMessage,
+  type ChatbotHistoryMessage,
+} from "../../shared/api/chatbot";
 
-type ChatMessage = { role: "assistant" | "user"; text: string };
+type ChatMessage = ChatbotHistoryMessage;
 type WidgetPosition = { x: number; y: number } | null;
 
 const WIDGET_SIZE = 72;
 const VIEWPORT_MARGIN = 16;
+const CHAT_HISTORY_LIMIT = 6;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -19,7 +23,7 @@ export function ChatbotWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      text: "Xin chào! Mình có thể cung cấp thông tin về MediBook, bác sĩ, chuyên khoa và quy trình đặt lịch.",
+      text: "Xin chào! Mình có thể cung cấp thông tin về Medicare, bác sĩ, chuyên khoa và quy trình đặt lịch.",
     },
   ]);
   const [draft, setDraft] = useState("");
@@ -45,7 +49,9 @@ export function ChatbotWidget() {
     setError("");
     setIsSending(true);
     try {
-      const response = await sendChatbotMessage(message);
+      // Bỏ lời chào cố định và chỉ gửi tối đa 6 tin nhắn gần nhất làm context.
+      const history = messages.slice(1).slice(-CHAT_HISTORY_LIMIT);
+      const response = await sendChatbotMessage(message, history);
       setMessages((current) => [...current, { role: "assistant", text: response.answer }]);
     } catch {
       setError("Chatbot tạm thời chưa sẵn sàng. Bạn vui lòng thử lại sau.");
@@ -95,7 +101,7 @@ export function ChatbotWidget() {
       style={position ? { left: position.x, top: position.y, right: "auto", bottom: "auto" } : undefined}
     >
       {isOpen && (
-        <section className="chatbot" aria-label="Trợ lý MediBook">
+        <section className="chatbot" aria-label="Trợ lý Medicare">
           <button
             className="chatbot__heading"
             type="button"
@@ -103,7 +109,7 @@ export function ChatbotWidget() {
             aria-label="Đóng khung chat"
           >
             <div>
-              <p className="eyebrow">MEDIBOOK AI</p>
+              <p className="eyebrow">MEDICARE AI</p>
               <h2>Trợ lý thông tin</h2>
             </div>
             <span className="chatbot__close" aria-hidden="true">
@@ -140,8 +146,9 @@ export function ChatbotWidget() {
       )}
       <button
         className="chatbot__launcher"
+        id="chatbot-launcher"
         type="button"
-        aria-label={isOpen ? "Đóng trợ lý MediBook" : "Mở trợ lý MediBook"}
+        aria-label={isOpen ? "Đóng trợ lý Medicare" : "Mở trợ lý Medicare"}
         aria-describedby={isOpen ? undefined : "chatbot-hint"}
         aria-expanded={isOpen}
         onPointerDown={handlePointerDown}

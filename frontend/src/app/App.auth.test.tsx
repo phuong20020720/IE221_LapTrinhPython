@@ -18,6 +18,8 @@ describe("Auth and internal routes", () => {
     expect(
       await screen.findByRole("heading", { name: "Đăng nhập nội bộ" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Medicare" })).toBeInTheDocument();
+    expect(screen.queryByText("MediBook", { exact: true })).not.toBeInTheDocument();
   });
 
   it("logs in and opens the admin area", async () => {
@@ -75,9 +77,12 @@ describe("Auth and internal routes", () => {
     fireEvent.click(screen.getByRole("button", { name: "Đăng nhập" }));
 
     expect(
-      await screen.findByRole("heading", { name: /Xin chào, Employee One/ }),
+      await screen.findByRole("heading", { name: /Chào Employee One/ }),
     ).toBeInTheDocument();
     expect(screen.getAllByText(/Employee One/).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Medicare - Tổng quan quản trị" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Medicare" })).toBeInTheDocument();
+    expect(screen.getByText("Medicare Admin")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Nhân viên" })).not.toBeInTheDocument();
   });
 

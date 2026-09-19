@@ -1,0 +1,106 @@
+import apps.doctors.models
+import django.db.models.deletion
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+    initial = True
+
+    dependencies = [
+        ("specialties", "0001_initial"),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name="Doctor",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("full_name", models.CharField(max_length=150)),
+                ("credentials", models.CharField(blank=True, default="", max_length=100)),
+                ("position", models.CharField(blank=True, default="", max_length=150)),
+                ("years_of_experience", models.PositiveIntegerField(blank=True, null=True)),
+                ("phone", models.CharField(max_length=20)),
+                ("email", models.EmailField(blank=True, default="", max_length=254)),
+                (
+                    "profile_image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to=apps.doctors.models.doctor_image_upload_path,
+                    ),
+                ),
+                ("professional_description", models.TextField(blank=True, default="")),
+                ("is_active", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "specialty",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="doctors",
+                        to="specialties.specialty",
+                    ),
+                ),
+            ],
+            options={
+                "ordering": ["full_name", "id"],
+                "indexes": [
+                    models.Index(
+                        fields=["specialty", "is_active"],
+                        name="ix_doctors_specialty_active",
+                    ),
+                    models.Index(fields=["full_name"], name="ix_doctors_full_name"),
+                ],
+                "constraints": [
+                    models.CheckConstraint(
+                        condition=models.Q(("years_of_experience__gte", 0), ("years_of_experience__isnull", True), _connector="OR"),
+                        name="doctors_experience_nonnegative",
+                    )
+                ],
+            },
+        ),
+        migrations.CreateModel(
+            name="DoctorExpertise",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("expertise_name", models.CharField(max_length=200)),
+                ("description", models.TextField(blank=True, default="")),
+                ("display_order", models.PositiveIntegerField(default=0)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "doctor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="expertises",
+                        to="doctors.doctor",
+                    ),
+                ),
+            ],
+            options={
+                "ordering": ["display_order", "id"],
+                "indexes": [
+                    models.Index(
+                        fields=["doctor", "display_order"],
+                        name="ix_expertise_doctor_order",
+                    )
+                ],
+            },
+        ),
+    ]

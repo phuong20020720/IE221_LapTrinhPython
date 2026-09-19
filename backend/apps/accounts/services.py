@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
 from apps.accounts.models import User
@@ -16,10 +17,22 @@ def _get_employee(*, employee_id: int) -> User:
         raise NotFound("Không tìm thấy tài khoản Employee.") from exc
 
 
-def list_employees(*, include_inactive: bool = False):
+def list_employees(
+    *,
+    query: str = "",
+    include_inactive: bool = False,
+    is_active: bool | None = None,
+):
     queryset = User.objects.filter(role=User.Role.EMPLOYEE).order_by("username")
-    if not include_inactive:
+    if is_active is not None:
+        queryset = queryset.filter(is_active=is_active)
+    elif not include_inactive:
         queryset = queryset.filter(is_active=True)
+    cleaned = query.strip()
+    if cleaned:
+        queryset = queryset.filter(
+            Q(username__icontains=cleaned) | Q(full_name__icontains=cleaned)
+        )
     return queryset
 
 
