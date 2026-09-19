@@ -13,6 +13,9 @@ urlpatterns = [
         "api/v1/employees/",
         include((employee_urlpatterns, "accounts"), namespace="employees"),
     ),
+    path("api/v1/specialties/", include("apps.specialties.urls")),
+    path("api/v1/doctors/", include("apps.doctors.urls")),
     path("api/v1/patients/", include("apps.patients.urls")),
+    path("api/v1/appointments/", include("apps.appointments.urls")),
     path("api/v1/chatbot/", include("apps.chatbot.urls")),
 ]

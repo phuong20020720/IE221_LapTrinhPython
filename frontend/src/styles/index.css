@@ -1343,3 +1343,703 @@ h1 {
   width: auto;
   margin: 0;
 }
+/* Booking, lookup and appointment management */
+
+.booking-page,
+.lookup-page {
+  gap: 1.5rem;
+}
+
+.booking-intro h1 {
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* Booking form: one on-brand card split into labelled sections, matching the
+   lookup card so the two public pages read as siblings. */
+.booking-form {
+  display: grid;
+  gap: 0;
+  width: 100%;
+  max-width: 46rem;
+  margin: 8px 0 0;
+  padding: 26px clamp(20px, 3vw, 30px);
+  border: 1px solid #cfe4dd;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px -44px rgba(11, 105, 93, 0.5);
+}
+
+.booking-section {
+  display: grid;
+  gap: 16px;
+}
+
+.booking-section + .booking-section {
+  margin-top: 26px;
+  padding-top: 26px;
+  border-top: 1px solid #eef4f1;
+}
+
+.booking-section__legend {
+  margin: 0;
+  color: #138273;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.booking-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.booking-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: #315b56;
+  font-weight: 650;
+}
+
+.booking-form input,
+.booking-form select,
+.booking-form textarea {
+  font: inherit;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #cfe4dd;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #143d38;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.booking-form input:focus,
+.booking-form select:focus,
+.booking-form textarea:focus {
+  border-color: #0b695d;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(11, 105, 93, 0.12);
+}
+
+.booking-form select {
+  cursor: pointer;
+}
+
+.booking-form select:disabled {
+  background: #f4f8f6;
+  color: #8aa19c;
+  cursor: not-allowed;
+}
+
+.booking-form textarea {
+  resize: vertical;
+  min-height: 96px;
+}
+
+/* Session picker: radios styled as selectable pills. */
+.booking-sessions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.booking-sessions legend {
+  width: 100%;
+  margin-bottom: 4px;
+  padding: 0;
+  color: #315b56;
+  font-weight: 650;
+}
+
+.booking-sessions label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 18px;
+  border: 1px solid #cfe4dd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #315b56;
+  cursor: pointer;
+  font-weight: 600;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.booking-sessions label:hover {
+  border-color: #9ecfc4;
+}
+
+.booking-sessions input[type="radio"] {
+  width: auto;
+  margin: 0;
+  accent-color: #0b695d;
+}
+
+.booking-sessions label:has(input:checked) {
+  border-color: #0b695d;
+  background: #e7f5f1;
+  color: #0b695d;
+}
+
+.booking-footer {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #eef4f1;
+}
+
+.booking-hint {
+  margin: 0;
+  color: #6a817d;
+  font-size: 0.9rem;
+}
+
+.booking-submit {
+  justify-self: start;
+  padding: 13px 26px;
+  border: 0;
+  border-radius: 12px;
+  background: #0b695d;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.booking-submit:hover:not(:disabled) {
+  background: #09574d;
+  transform: translateY(-1px);
+}
+
+.booking-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .booking-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Booking confirmation: on-brand success card. */
+.booking-success {
+  width: 100%;
+  max-width: 40rem;
+  margin: 8px 0 0;
+  padding: 30px clamp(22px, 3vw, 32px);
+  border: 1px solid #cfe4dd;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px -44px rgba(11, 105, 93, 0.5);
+}
+
+.booking-success__badge {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+  background: #e7f5f1;
+  color: #0b695d;
+}
+
+.booking-success__badge svg {
+  width: 28px;
+  height: 28px;
+}
+
+.booking-success__code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  background: #eef5f2;
+  border: 1px solid #cfe4dd;
+  color: #0b695d;
+  word-break: break-all;
+}
+
+.booking-success__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.9rem 1.5rem;
+  margin: 1.25rem 0;
+}
+
+.booking-success__details dt {
+  color: #86a09a;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.booking-success__details dd {
+  margin: 0.2rem 0 0;
+  color: #143d38;
+  font-weight: 650;
+}
+
+.booking-success__actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.booking-success__actions .button-secondary {
+  padding: 11px 20px;
+  border: 1px solid #cfe4dd;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.appointment-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.status-chip--pending_assignment {
+  background: #fff3d6;
+  color: #7a5200;
+}
+
+.status-chip--confirmed {
+  background: #e0f0ff;
+  color: #12507e;
+}
+
+.status-chip--in_progress {
+  background: #e6f7ec;
+  color: #1c6b3c;
+}
+
+.status-chip--completed {
+  background: #eceff3;
+  color: #45525f;
+}
+
+.status-chip--cancelled {
+  background: #fde8e8;
+  color: #8c2b2b;
+}
+
+/* Appointment admin controls reuse the admin-toolbar/admin-form tokens:
+   the design system styles controls per container, so the filter select,
+   the in-table doctor picker, the modal reason select and the row-action
+   text buttons need their own rules to match. */
+
+.admin-toolbar select,
+.admin-form select {
+  padding: 12px 14px;
+  border: 1px solid #c5ded8;
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.admin-form select {
+  width: 100%;
+}
+
+.data-table select {
+  padding: 8px 10px;
+  border: 1px solid #c5ded8;
+  border-radius: 10px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.data-table__actions button {
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: #0b695d;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  white-space: nowrap;
+  transition: background 160ms ease;
+}
+
+.data-table__actions button:hover:not(:disabled) {
+  background: #09574d;
+}
+
+.data-table__actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Cancel keeps the shared secondary look but needs an outline to read as a
+   button once the base border is removed. */
+.data-table__actions .button-secondary {
+  border: 1px solid #cfe4dd;
+}
+
+/* Multi-line cells align to the top so a wrapped reason or a two-line name
+   does not shove the row's other cells off-centre. */
+.data-table td {
+  vertical-align: top;
+}
+
+/* Stack the status chip and its cancellation reason vertically; the reason
+   drops onto its own line instead of trailing the chip. */
+.appointment-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.appointment-status__reason {
+  color: #8a5a5a;
+  line-height: 1.4;
+}
+
+.appointment-actions__done {
+  color: #6a817d;
+}
+
+.admin-pager {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.admin-pager__status {
+  color: #54716d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-pager button {
+  padding: 9px 16px;
+  border: 1px solid #cfe4dd;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #315b56;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 650;
+  transition: background 160ms ease;
+}
+
+.admin-pager button:hover:not(:disabled) {
+  background: #edf6f3;
+}
+
+.admin-pager button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Public lookup: follows the left-aligned public-page layout (topbar, intro,
+   then content flowing down the left), with polished on-brand result cards. */
+
+.lookup-card {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  max-width: 640px;
+  margin: 8px 0 0;
+  padding: 22px;
+  border: 1px solid #cfe4dd;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px -40px rgba(11, 105, 93, 0.5);
+}
+
+.lookup-segment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #eef5f2;
+}
+
+.lookup-segment__option {
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #4b6b66;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 650;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.lookup-segment__option.is-active {
+  background: #ffffff;
+  color: #0b695d;
+  box-shadow: 0 6px 16px -10px rgba(11, 105, 93, 0.7);
+}
+
+.lookup-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 6px 6px 14px;
+  border: 1px solid #cfe4dd;
+  border-radius: 14px;
+  background: #ffffff;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.lookup-field:focus-within {
+  border-color: #0b695d;
+  box-shadow: 0 0 0 4px rgba(11, 105, 93, 0.12);
+}
+
+.lookup-field__icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  color: #7f9a94;
+}
+
+.lookup-field input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: #143d38;
+  font: inherit;
+}
+
+.lookup-field__submit {
+  flex: none;
+  padding: 11px 22px;
+  border: 0;
+  border-radius: 10px;
+  background: #0b695d;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition: background 160ms ease;
+}
+
+.lookup-field__submit:hover:not(:disabled) {
+  background: #09574d;
+}
+
+.lookup-field__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lookup-card__hint {
+  margin: 0;
+  color: #6a817d;
+  font-size: 0.88rem;
+}
+
+.lookup-feedback {
+  max-width: 640px;
+  margin: 22px 0 0;
+  padding: 14px 18px;
+  border: 1px solid #f0cdcd;
+  border-radius: 14px;
+  background: #fdf2f2;
+  color: #9a3b3b;
+  font-weight: 600;
+}
+
+.lookup-results {
+  width: 100%;
+  max-width: 1200px;
+  margin: 44px 0 0;
+}
+
+.lookup-results__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.lookup-results__head h2 {
+  margin: 0;
+  color: #143d38;
+  font-size: 1.3rem;
+}
+
+.lookup-results__count {
+  color: #6a817d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.lookup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appt-card {
+  padding: 20px;
+  border: 1px solid #dbe8e4;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px -38px rgba(11, 105, 93, 0.55);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.appt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 50px -34px rgba(11, 105, 93, 0.6);
+}
+
+.appt-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.appt-card__label {
+  color: #86a09a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.appt-card__code {
+  margin: 8px 0 16px;
+  color: #0b695d;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.98rem;
+  word-break: break-all;
+}
+
+.appt-card__meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid #eef4f1;
+}
+
+.appt-card__meta dt {
+  color: #86a09a;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.appt-card__meta dd {
+  margin: 4px 0 0;
+  color: #143d38;
+  font-weight: 650;
+}
+
+/* No-match panel keeps the results area from collapsing to a bare heading. */
+.lookup-empty {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  padding: 32px 26px;
+  border: 1px dashed #cfe4dd;
+  border-radius: 18px;
+  background: #f7fbf9;
+}
+
+.lookup-empty svg {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 6px;
+  color: #9ab8b1;
+}
+
+.lookup-empty__title {
+  margin: 0;
+  color: #143d38;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.lookup-empty__hint {
+  margin: 0;
+  color: #6a817d;
+}
+
+/* Result cards rise in with a light stagger; skipped under reduced motion. */
+.appt-card {
+  animation: lookup-rise 320ms ease both;
+}
+
+.appt-card:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.appt-card:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.appt-card:nth-child(4) {
+  animation-delay: 180ms;
+}
+
+.appt-card:nth-child(n + 5) {
+  animation-delay: 240ms;
+}
+
+@keyframes lookup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appt-card {
+    animation: none;
+  }
+}

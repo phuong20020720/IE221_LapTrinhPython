@@ -197,7 +197,7 @@ export function DoctorsPage() {
           <div className="doctor-grid">
             {doctors.map((doctor) => {
               const primaryExpertise =
-                doctor.expertises.find(
+                doctor.expertises?.find(
                   (item) => item.is_primary,
                 );
 
