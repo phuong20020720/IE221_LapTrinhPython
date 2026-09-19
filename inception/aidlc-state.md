@@ -1,35 +1,49 @@
 # AI-DLC State
 
 - Profile: MVP
-- Increment: Accounts, Authentication và Patients
+- Increment: Appointments, Booking and Lookup
 - Current stage: Verification
 - Gate status: pending
-- Last verified: 2026-09-18
+- Last verified: 2026-09-19
 
 ## Scope
 
-Triển khai custom User + JWT cho Employee/Admin, CRUD Employee (Admin), Patient model với chuẩn hóa SĐT, CRUD/search Patients, và SPA auth flow kèm UI quản lý.
+`Appointment` model with a UUID booking code, session, status and cancellation
+data; a booking service that runs find-or-create patient and appointment
+creation in one transaction; a state machine that rejects illegal transitions;
+public booking and lookup APIs; and an Employee screen to filter and process
+appointments.
 
 ## Sources of truth
 
-- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#12-đăng-nhập-và-phân-quyền`
-- `inception/plainning/thiết-kế-database-và-erd.md#4.1-users`
-- `inception/plainning/thiết-kế-database-và-erd.md#4.5-patients`
-- `inception/architecture/adr/002-authentication.md`
+- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#8-quy-tắc-đặt-lịch`
+- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#10-trạng-thái-lịch-hẹn`
+- `inception/plainning/đặc-tả-mvp-và-quy-tắc-nghiệp-vụ.md#11-tra-cứu-lịch-hẹn-công-khai`
+- `inception/plainning/thiết-kế-database-và-erd.md#4.6-appointments`
 - `inception/architecture/api-contract.md`
-- `inception/architecture/security-and-permission-model.md`
 
 ## Evidence
 
 - Django check + makemigrations check: passed.
-- Backend tests: 24 passed (`accounts`, `patients`, `chatbot`).
-- Frontend typecheck, ESLint, Vitest (8) và production build: passed.
-- Migrations: `accounts.0002_user_role_constraint`, `patients.0001_initial`.
+- Migrate from an empty database: passed.
+- Backend tests: 103 passed (`accounts`, `patients`, `chatbot`, `appointments`, `doctors`).
+- Frontend typecheck, ESLint, Vitest (19) and production build: passed.
+- Migrations: `specialties.0001_initial`, `doctors.0001_initial`, `appointments.0001_initial`.
 
 ## Open decisions
 
-- Không
+- `apps/specialties` and `apps/doctors` carry provisional models because the
+  `feature/specialties-doctors` branch shipped frontend only. Developer 3
+  replaces them with the real ones; `appointments` needs no change as long as
+  the ERD shape holds.
+- `frontend/src/shared/api/doctors.ts` models a doctor as having many
+  specialties, which contradicts the ERD. This has to be settled before the
+  merge into `dev`.
+- `IN_PROGRESS -> CANCELLED` is allowed, following
+  `thiết-kế-database-và-erd.md#8`; MVP spec section 10 does not list it.
 
 ## Next action
 
-Chạy `$medibook-aidlc-verify` hoặc người dùng Acceptance Gate sau khi tự smoke-test login/Patients/Employees trên UI.
+Request the Acceptance Gate for the Appointments increment, then merge
+`feature/appointments` into `dev` once the real specialty and doctor backend
+is ready.

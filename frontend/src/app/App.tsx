@@ -10,12 +10,14 @@ import { EmployeesPage } from "../pages/EmployeesPage";
 import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { PatientsPage } from "../pages/PatientsPage";
-import { PlaceholderPage } from "../pages/PlaceholderPage";
 
 import { DoctorDetailPage } from "../pages/DoctorDetailPage";
 import { DoctorsPage } from "../pages/DoctorsPage";
 import { SpecialtiesPage } from "../pages/SpecialtiesPage";
 import { AdminDoctorsPage } from "../pages/AdminDoctorsPage";
+import { AdminAppointmentsPage } from "../pages/AdminAppointmentsPage";
+import { BookingPage } from "../pages/BookingPage";
+import { LookupPage } from "../pages/LookupPage";
 
 export function App() {
   return (
@@ -30,20 +32,15 @@ export function App() {
             /> */}
             <Route path="/doctors" element={<DoctorsPage />} />
             <Route path="/doctors/:doctorId" element={<DoctorDetailPage />} />
-            <Route
-              path="/booking"
-              element={<PlaceholderPage title="Đặt lịch khám" />}
-            />
-            <Route
-              path="/lookup"
-              element={<PlaceholderPage title="Tra cứu lịch hẹn" />}
-            />
+            <Route path="/booking" element={<BookingPage />} />
+            <Route path="/lookup" element={<LookupPage />} />
           </Route>
           <Route path="/login" element={<LoginPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboardPage />} />
               <Route path="patients" element={<PatientsPage />} />
+              <Route path="appointments" element={<AdminAppointmentsPage />} />
               <Route element={<RoleRoute roles={["ADMIN"]} />}>
                 <Route path="employees" element={<EmployeesPage />} />
                 <Route path="specialties" element={<SpecialtiesPage />}/>

@@ -115,6 +115,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_THROTTLE_RATES": {
+        "appointment-booking": os.getenv("MEDIBOOK_BOOKING_RATE", "20/hour"),
+    },
 }
 
 SIMPLE_JWT = {

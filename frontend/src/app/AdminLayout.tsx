@@ -36,6 +36,17 @@ function IconEmployees() {
   );
 }
 
+function IconAppointments() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="admin-nav__icon">
+      <path
+        d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 8v9H5v-9h14zm-9 2H7v3h3v-3z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 function IconLogout() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className="admin-nav__icon">
@@ -105,6 +116,10 @@ export function AdminLayout() {
             <NavLink to="/admin" end className="admin-nav__item">
               <IconOverview />
               <span>Tổng quan</span>
+            </NavLink>
+            <NavLink to="/admin/appointments" className="admin-nav__item">
+              <IconAppointments />
+              <span>Lịch hẹn</span>
             </NavLink>
             <NavLink to="/admin/patients" className="admin-nav__item">
               <IconPatients />
